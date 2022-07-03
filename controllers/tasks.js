@@ -1,5 +1,6 @@
 const Task = require('../models/Task')
 const asyncWrapper =require('../middlewares/ayncwrapper')
+const {createCustomError} = require('../errors/custom-error')
 
 const getAlltasks=asyncWrapper( async(req,res)=>{
         const tasks= await Task.find({}) 
@@ -18,7 +19,8 @@ const getTask=asyncWrapper (async(req,res)=>{
         const task = await Task.findOne({_id: taskID})
         
          if(!task){
-             return res.status(404).json({msg:`No Task with ID: ${taskID}`})
+            return next(createCustomError(`No Task with ID: ${taskID}`,404))
+           
             }
     
         res.status(200).json({task})
@@ -33,7 +35,7 @@ const deleteTask=asyncWrapper (async(req,res)=>{
         res.status(200).json({task})
         if(!task)
         {
-            return res.status(404).json({msg: `No Task with ID : ${taskID}`})
+            return next(createCustomError(`No Task with ID: ${taskID}`,404))
             
         }
 
@@ -50,7 +52,7 @@ const updateTask=asyncWrapper (async(req,res)=>{
         
         if(!task)
         {
-            return res.status(404).json({msg: `No Task with ID : ${taskID}`})   
+            return next(createCustomError(`No Task with ID: ${taskID}`,404))  
         }
         res.status(200).json({task})
 }
